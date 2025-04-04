@@ -167,17 +167,18 @@ header {
 
 <div class="carousel-container" id="carouselContainer"></div>
 
+<!-- Tambahkan Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js"></script>
 
 <script>
-  // 🔹 Konfigurasi Firebase (Tetap Sama)
+  // 🔹 Konfigurasi Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAy0oH9603g33JYrCDi17kzkHr9EfMySts",
     authDomain: "scriptbott-a332d.firebaseapp.com",
     databaseURL: "https://scriptbott-a332d-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "scriptbott-a332d",
-    storageBucket: "scriptbott-a332d.firebasestorage.app",
+    storageBucket: "scriptbott-a332d.appspot.com",
     messagingSenderId: "416325024204",
     appId: "1:416325024204:web:50163d435fd43808180569",
     measurementId: "G-78WVLYZMBR"
@@ -194,11 +195,15 @@ header {
       window.location.href = "login.html";
     }
 
-    // 🔹 Pastikan tampilan upload tetap muncul jika user owner
     if (role === "owner") {
       document.getElementById('uploadContainer').style.display = "block";
     }
   }
+
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    sessionStorage.clear();
+    window.location.href = "login.html";
+  });
 
   function loadScripts() {
     let carouselContainer = document.getElementById("carouselContainer");
@@ -278,11 +283,6 @@ header {
         }
       });
     });
-  });
-
-  document.getElementById('logoutBtn').addEventListener('click', function() {
-    sessionStorage.clear();
-    window.location.href = "login.html";
   });
 
   checkLogin();
