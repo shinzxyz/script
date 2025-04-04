@@ -171,7 +171,7 @@ header {
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js"></script>
 
 <script>
-  // 🔹 Konfigurasi Firebase
+  // 🔹 Konfigurasi Firebase (Tetap Sama)
   const firebaseConfig = {
     apiKey: "AIzaSyAy0oH9603g33JYrCDi17kzkHr9EfMySts",
     authDomain: "scriptbott-a332d.firebaseapp.com",
@@ -194,13 +194,12 @@ header {
       window.location.href = "login.html";
     }
 
-    // 🔹 Pastikan tampilan upload muncul jika user adalah owner
+    // 🔹 Pastikan tampilan upload tetap muncul jika user owner
     if (role === "owner") {
       document.getElementById('uploadContainer').style.display = "block";
     }
   }
 
-  // 🔹 Load Scripts dari Firebase
   function loadScripts() {
     let carouselContainer = document.getElementById("carouselContainer");
     carouselContainer.innerHTML = "";
@@ -223,7 +222,6 @@ header {
     });
   }
 
-  // 🔹 Upload Script ke Firebase (Tampilan Upload Tetap Ada)
   function uploadScript() {
     let botName = document.getElementById('botName').value.trim();
     let linkNoEnc = document.getElementById('linkNoEnc').value.trim();
@@ -247,7 +245,6 @@ header {
     });
   }
 
-  // 🔹 Hapus Script dari Firebase
   function deleteScript(scriptId) {
     database.ref("scripts/" + scriptId).remove().then(() => {
       alert("Script berhasil dihapus!");
@@ -258,7 +255,6 @@ header {
     });
   }
 
-  // 🔹 Search Script (Tampilan Search Tetap Ada)
   document.getElementById('searchInput').addEventListener('input', function() {
     let searchValue = this.value.toLowerCase();
     let carouselContainer = document.getElementById("carouselContainer");
@@ -284,7 +280,6 @@ header {
     });
   });
 
-  // 🔹 Logout (Tampilan Logout Tetap Ada)
   document.getElementById('logoutBtn').addEventListener('click', function() {
     sessionStorage.clear();
     window.location.href = "login.html";
