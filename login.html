@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - SC BOT</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    .login-container h2 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    .login-container input {
+      width: 100%;
+      padding: 0.7rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      outline: none;
+    }
+    .login-container input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .login-container button {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #007BFF, #0056b3);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .login-container button:hover {
+      background: linear-gradient(90deg, #0056b3, #003c7a);
+    }
+    .copyright {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Login</h2>
+  <input type="text" id="userName" placeholder="Nama">
+  <input type="text" id="userPhone" placeholder="Nomor HP">
+  <button onclick="login()">Masuk</button>
+  <div class="copyright">© 2025 Prayuda Sychputz</div>
+</div>
+
+<script>
+  function login() {
+    let name = document.getElementById('userName').value.trim().toLowerCase();
+    let phone = document.getElementById('userPhone').value.trim();
+
+    if (name === "" || phone === "") {
+      alert("Nama dan Nomor HP harus diisi!");
+      return;
+    }
+
+    let role = (name === "yuda" && phone === "62882008702155") ? "owner" : "user";
+
+    sessionStorage.setItem('userName', name);
+    sessionStorage.setItem('userRole', role);
+
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>

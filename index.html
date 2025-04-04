@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Script Bot Share</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #fff;
+    }
+
+    /* Header */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 🔹 Biar rapi */
+  padding: 0.8rem 1.5rem;
+  background: rgba(0, 50, 100, 0.6); /* 🔹 Warna blur */
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5); /* 🔹 Stroke putih */
+  z-index: 1000;
+}
+
+/* Bungkus menu dalam flex container */
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* 🔹 Kasih jarak antar elemen */
+}
+
+/* Search Bar */
+.search-bar {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  width: 200px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  outline: none;
+  transition: 0.3s;
+}
+
+.search-bar::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.search-bar:focus {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Tombol Logout */
+#logoutBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+#logoutBtn svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+    .logo { font-size: 1.5rem; font-weight: bold; }
+    .menu button {
+      background: #ff4d4d;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Upload Section */
+    .upload-container {
+      display: none;
+      margin-top: 6rem;
+      max-width: 400px;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      margin: 6rem auto 2rem;
+    }
+    .upload-container input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 0.8rem;
+      border: none;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+    .upload-container button {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Carousel */
+    .carousel-container {
+      margin-top: 8rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      white-space: nowrap;
+      padding: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .carousel-card {
+      background: #001f3f;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 1rem;
+      width: 250px;
+      text-align: center;
+      display: inline-block;
+      flex: 0 0 auto;
+      scroll-snap-align: center;
+    }
+    .carousel-card h3 { margin-bottom: 0.5rem; }
+    .carousel-card a {
+      display: block;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 5px;
+      color: white;
+      text-decoration: none;
+    }
+    .enc { background: #007BFF; }
+    .noenc { background: #28a745; }
+    .delete-btn {
+      background: #ff4d4d;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SC BOT</div>
+  <input type="text" id="searchInput" placeholder="Cari script..." class="search-bar">
+  <button id="logoutBtn">
+    <svg viewBox="0 0 24 24"><path d="M10 9v6h4v-4h4v-2h-4V9h-4zM7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/></svg>
+  </button>
+</header>
+
+<div id="uploadContainer" class="upload-container">
+  <h2>Upload Script</h2>
+  <input type="text" id="botName" placeholder="Nama Bot">
+  <input type="text" id="linkNoEnc" placeholder="Link No Enc">
+  <input type="text" id="linkEnc" placeholder="Link Enc">
+  <button onclick="uploadScript()">Upload</button>
+</div>
+
+<div class="carousel-container" id="carouselContainer"></div>
+
+<script>
+  function checkLogin() {
+    let name = sessionStorage.getItem('userName');
+    let role = sessionStorage.getItem('userRole');
+
+    if (!name) {
+      window.location.href = "login.html";
+    }
+
+    if (role === "owner") {
+      document.getElementById('uploadContainer').style.display = "block";
+    }
+  }
+
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    let scriptData = localStorage.getItem('scriptData'); 
+    localStorage.clear(); 
+    localStorage.setItem('scriptData', scriptData); 
+    window.location.href = "login.html"; 
+});
+
+  function loadScripts() {
+    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+    let carouselContainer = document.getElementById("carouselContainer");
+    carouselContainer.innerHTML = "";
+
+    scripts.forEach((item, index) => {
+      let div = document.createElement("div");
+      div.className = "carousel-card";
+      div.innerHTML = `
+        <h3>${item.botName}</h3>
+        <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
+        <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
+        ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
+      `;
+      carouselContainer.appendChild(div);
+    });
+  }
+  document.getElementById('searchInput').addEventListener('input', function() {
+    let searchValue = this.value.toLowerCase();
+    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+    let filteredScripts = scripts.filter(script => script.botName.toLowerCase().includes(searchValue));
+    
+    let carouselContainer = document.getElementById("carouselContainer");
+    carouselContainer.innerHTML = "";
+
+    filteredScripts.forEach((item, index) => {
+      let div = document.createElement("div");
+      div.className = "carousel-card";
+      div.innerHTML = `
+        <h3>${item.botName}</h3>
+        <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
+        <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
+        ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
+      `;
+      carouselContainer.appendChild(div);
+    });
+});
+  
+  function uploadScript() {
+    let botName = document.getElementById('botName').value.trim();
+    let linkNoEnc = document.getElementById('linkNoEnc').value.trim();
+    let linkEnc = document.getElementById('linkEnc').value.trim();
+
+    if (!botName || !linkNoEnc || !linkEnc) {
+      alert("Semua kolom harus diisi!");
+      return;
+    }
+
+    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+    scripts.push({ botName, linkNoEnc, linkEnc });
+
+    localStorage.setItem("scriptData", JSON.stringify(scripts));
+    loadScripts();
+  }
+
+  function deleteScript(index) {
+    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+    scripts.splice(index, 1);
+    localStorage.setItem("scriptData", JSON.stringify(scripts));
+    loadScripts();
+  }
+
+  checkLogin();
+  loadScripts();
+</script>
+
+</body>
+</html>
