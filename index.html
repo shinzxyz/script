@@ -194,12 +194,13 @@ header {
       window.location.href = "login.html";
     }
 
+    // 🔹 Pastikan tampilan upload muncul jika user adalah owner
     if (role === "owner") {
       document.getElementById('uploadContainer').style.display = "block";
     }
   }
 
-  // 🔹 Fungsi Load Scripts dari Firebase
+  // 🔹 Load Scripts dari Firebase
   function loadScripts() {
     let carouselContainer = document.getElementById("carouselContainer");
     carouselContainer.innerHTML = "";
@@ -222,7 +223,7 @@ header {
     });
   }
 
-  // 🔹 Fungsi Upload Script ke Firebase
+  // 🔹 Upload Script ke Firebase (Tampilan Upload Tetap Ada)
   function uploadScript() {
     let botName = document.getElementById('botName').value.trim();
     let linkNoEnc = document.getElementById('linkNoEnc').value.trim();
@@ -246,7 +247,7 @@ header {
     });
   }
 
-  // 🔹 Fungsi Hapus Script dari Firebase
+  // 🔹 Hapus Script dari Firebase
   function deleteScript(scriptId) {
     database.ref("scripts/" + scriptId).remove().then(() => {
       alert("Script berhasil dihapus!");
@@ -257,7 +258,7 @@ header {
     });
   }
 
-  // 🔹 Fungsi Search Script
+  // 🔹 Search Script (Tampilan Search Tetap Ada)
   document.getElementById('searchInput').addEventListener('input', function() {
     let searchValue = this.value.toLowerCase();
     let carouselContainer = document.getElementById("carouselContainer");
@@ -283,7 +284,7 @@ header {
     });
   });
 
-  // 🔹 Logout dan Hapus Session
+  // 🔹 Logout (Tampilan Logout Tetap Ada)
   document.getElementById('logoutBtn').addEventListener('click', function() {
     sessionStorage.clear();
     window.location.href = "login.html";
