@@ -187,7 +187,25 @@ header {
     localStorage.setItem('scriptData', scriptData); 
     window.location.href = "login.html"; 
 });
+    function loadScripts() {
+    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+    console.log("Data script yang dimuat:", scripts);
 
+    let carouselContainer = document.getElementById("carouselContainer");
+    carouselContainer.innerHTML = "";
+
+    scripts.forEach((item, index) => {
+        let div = document.createElement("div");
+        div.className = "carousel-card";
+        div.innerHTML = `
+            <h3>${item.botName}</h3>
+            <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
+            <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
+            ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
+        `;
+        carouselContainer.appendChild(div);
+    });
+}
   async function fetchScripts() {
     let scripts = JSON.parse(localStorage.getItem("scriptData"));
 
