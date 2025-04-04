@@ -1,0 +1,12 @@
+[
+  {
+    "botName": "Example Bot 1",
+    "linkNoEnc": "https://example.com/noenc1",
+    "linkEnc": "https://example.com/enc1"
+  },
+  {
+    "botName": "Example Bot 2",
+    "linkNoEnc": "https://example.com/noenc2",
+    "linkEnc": "https://example.com/enc2"
+  }
+]

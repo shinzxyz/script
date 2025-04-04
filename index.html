@@ -188,23 +188,23 @@ header {
     window.location.href = "login.html"; 
 });
 
-  function loadScripts() {
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    let carouselContainer = document.getElementById("carouselContainer");
-    carouselContainer.innerHTML = "";
+  async function fetchScripts() {
+    let scripts = JSON.parse(localStorage.getItem("scriptData"));
 
-    scripts.forEach((item, index) => {
-      let div = document.createElement("div");
-      div.className = "carousel-card";
-      div.innerHTML = `
-        <h3>${item.botName}</h3>
-        <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
-        <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
-        ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
-      `;
-      carouselContainer.appendChild(div);
-    });
-  }
+    if (!scripts || scripts.length === 0) {
+        try {
+            let response = await fetch("/sc.json"); // Ambil data dari JSON
+            let data = await response.json();
+            localStorage.setItem("scriptData", JSON.stringify(data));
+            loadScripts(); // Tampilkan script setelah di-load
+        } catch (error) {
+            console.error("Gagal mengambil data default:", error);
+        }
+    } else {
+        loadScripts(); // Jika sudah ada data di localStorage, langsung load
+    }
+}
+
   document.getElementById('searchInput').addEventListener('input', function() {
     let searchValue = this.value.toLowerCase();
     let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
@@ -232,8 +232,8 @@ header {
     let linkEnc = document.getElementById('linkEnc').value.trim();
 
     if (!botName || !linkNoEnc || !linkEnc) {
-      alert("Semua kolom harus diisi!");
-      return;
+        alert("Semua kolom harus diisi!");
+        return;
     }
 
     let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
@@ -241,7 +241,7 @@ header {
 
     localStorage.setItem("scriptData", JSON.stringify(scripts));
     loadScripts();
-  }
+}
 
   function deleteScript(index) {
     let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
@@ -251,7 +251,7 @@ header {
   }
 
   checkLogin();
-  loadScripts();
+  fetchScripts();
 </script>
 
 </body>

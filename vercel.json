@@ -1,0 +1,8 @@
+{
+  "routes": [
+    {
+      "src": "/sc.json",
+      "dest": "/sc.json"
+    }
+  ]
+}
