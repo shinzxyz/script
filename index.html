@@ -199,10 +199,15 @@ header {
       document.getElementById('uploadContainer').style.display = "block";
     }
   }
-
+  // 🔹 Logout User
   document.getElementById('logoutBtn').addEventListener('click', function() {
-    sessionStorage.clear();
-    window.location.href = "login.html";
+    firebase.auth().signOut().then(() => {
+      sessionStorage.clear();
+      window.location.href = "login.html"; // Arahkan ke halaman login
+    }).catch((error) => {
+      console.error("Gagal logout:", error);
+      alert("Gagal logout.");
+    });
   });
 
   function loadScripts() {
