@@ -167,7 +167,25 @@ header {
 
 <div class="carousel-container" id="carouselContainer"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js"></script>
+
 <script>
+  // 🔹 Konfigurasi Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAy0oH9603g33JYrCDi17kzkHr9EfMySts",
+    authDomain: "scriptbott-a332d.firebaseapp.com",
+    databaseURL: "https://scriptbott-a332d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "scriptbott-a332d",
+    storageBucket: "scriptbott-a332d.firebasestorage.app",
+    messagingSenderId: "416325024204",
+    appId: "1:416325024204:web:50163d435fd43808180569",
+    measurementId: "G-78WVLYZMBR"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
   function checkLogin() {
     let name = sessionStorage.getItem('userName');
     let role = sessionStorage.getItem('userRole');
@@ -181,96 +199,96 @@ header {
     }
   }
 
-  document.getElementById('logoutBtn').addEventListener('click', function() {
-    let scriptData = localStorage.getItem('scriptData'); 
-    localStorage.clear(); 
-    localStorage.setItem('scriptData', scriptData); 
-    window.location.href = "login.html"; 
-});
-    function loadScripts() {
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    console.log("Data script yang dimuat:", scripts);
-
+  // 🔹 Fungsi Load Scripts dari Firebase
+  function loadScripts() {
     let carouselContainer = document.getElementById("carouselContainer");
     carouselContainer.innerHTML = "";
 
-    scripts.forEach((item, index) => {
+    database.ref("scripts").once("value", (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        let data = childSnapshot.val();
+        let key = childSnapshot.key;
+
         let div = document.createElement("div");
         div.className = "carousel-card";
         div.innerHTML = `
-            <h3>${item.botName}</h3>
-            <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
-            <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
-            ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
+          <h3>${data.botName}</h3>
+          <a href="${data.linkEnc}" class="enc" target="_blank">ENC</a>
+          <a href="${data.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
+          ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript('${key}')">Hapus</button>` : ""}
         `;
         carouselContainer.appendChild(div);
+      });
     });
-}
-  async function fetchScripts() {
-    let scripts = JSON.parse(localStorage.getItem("scriptData"));
+  }
 
-    if (!scripts || scripts.length === 0) {
-        try {
-            let response = await fetch("/sc.json"); // Ambil data dari JSON
-            let data = await response.json();
-            localStorage.setItem("scriptData", JSON.stringify(data));
-            loadScripts(); // Tampilkan script setelah di-load
-        } catch (error) {
-            console.error("Gagal mengambil data default:", error);
-        }
-    } else {
-        loadScripts(); // Jika sudah ada data di localStorage, langsung load
-    }
-}
-
-  document.getElementById('searchInput').addEventListener('input', function() {
-    let searchValue = this.value.toLowerCase();
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    let filteredScripts = scripts.filter(script => script.botName.toLowerCase().includes(searchValue));
-    
-    let carouselContainer = document.getElementById("carouselContainer");
-    carouselContainer.innerHTML = "";
-
-    filteredScripts.forEach((item, index) => {
-      let div = document.createElement("div");
-      div.className = "carousel-card";
-      div.innerHTML = `
-        <h3>${item.botName}</h3>
-        <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
-        <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
-        ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
-      `;
-      carouselContainer.appendChild(div);
-    });
-});
-  
+  // 🔹 Fungsi Upload Script ke Firebase
   function uploadScript() {
     let botName = document.getElementById('botName').value.trim();
     let linkNoEnc = document.getElementById('linkNoEnc').value.trim();
     let linkEnc = document.getElementById('linkEnc').value.trim();
 
     if (!botName || !linkNoEnc || !linkEnc) {
-        alert("Semua kolom harus diisi!");
-        return;
+      alert("Semua kolom harus diisi!");
+      return;
     }
 
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    scripts.push({ botName, linkNoEnc, linkEnc });
-
-    localStorage.setItem("scriptData", JSON.stringify(scripts));
-    loadScripts();
-}
-
-  function deleteScript(index) {
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    scripts.splice(index, 1);
-    localStorage.setItem("scriptData", JSON.stringify(scripts));
-    loadScripts();
+    database.ref("scripts").push({
+      botName: botName,
+      linkNoEnc: linkNoEnc,
+      linkEnc: linkEnc
+    }).then(() => {
+      alert("Script berhasil diupload!");
+      loadScripts();
+    }).catch((error) => {
+      console.error("Gagal upload:", error);
+      alert("Gagal upload script.");
+    });
   }
 
-  checkLogin();
-  fetchScripts();
-</script>
+  // 🔹 Fungsi Hapus Script dari Firebase
+  function deleteScript(scriptId) {
+    database.ref("scripts/" + scriptId).remove().then(() => {
+      alert("Script berhasil dihapus!");
+      loadScripts();
+    }).catch((error) => {
+      console.error("Gagal hapus:", error);
+      alert("Gagal menghapus script.");
+    });
+  }
 
-</body>
-</html>
+  // 🔹 Fungsi Search Script
+  document.getElementById('searchInput').addEventListener('input', function() {
+    let searchValue = this.value.toLowerCase();
+    let carouselContainer = document.getElementById("carouselContainer");
+    carouselContainer.innerHTML = "";
+
+    database.ref("scripts").once("value", (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        let data = childSnapshot.val();
+        let key = childSnapshot.key;
+
+        if (data.botName.toLowerCase().includes(searchValue)) {
+          let div = document.createElement("div");
+          div.className = "carousel-card";
+          div.innerHTML = `
+            <h3>${data.botName}</h3>
+            <a href="${data.linkEnc}" class="enc" target="_blank">ENC</a>
+            <a href="${data.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
+            ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript('${key}')">Hapus</button>` : ""}
+          `;
+          carouselContainer.appendChild(div);
+        }
+      });
+    });
+  });
+
+  // 🔹 Logout dan Hapus Session
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    sessionStorage.clear();
+    window.location.href = "login.html";
+  });
+
+  checkLogin();
+  loadScripts();
+</script>
