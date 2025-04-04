@@ -1,276 +1,508 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Script Bot Share</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      color: #fff;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Script Bot Share</title>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Arial', sans-serif; 
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
+        }
 
-    /* Header */
-header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* 🔹 Biar rapi */
-  padding: 0.8rem 1.5rem;
-  background: rgba(0, 50, 100, 0.6); /* 🔹 Warna blur */
-  backdrop-filter: blur(10px);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.5); /* 🔹 Stroke putih */
-  z-index: 1000;
-}
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 50, 100, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+        }
 
-/* Bungkus menu dalam flex container */
-.menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem; /* 🔹 Kasih jarak antar elemen */
-}
+        .search-bar {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            width: 200px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            outline: none;
+            transition: 0.3s;
+        }
 
-/* Search Bar */
-.search-bar {
-  padding: 0.5rem;
-  border: none;
-  border-radius: 6px;
-  width: 200px;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  outline: none;
-  transition: 0.3s;
-}
+        .search-bar::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
 
-.search-bar::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
+        .search-bar:focus {
+            background: rgba(255,255,255,0.2);
+        }
 
-.search-bar:focus {
-  background: rgba(255,255,255,0.2);
-}
+        #logoutBtn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
 
-/* Tombol Logout */
-#logoutBtn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-}
+        #logoutBtn svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
 
-#logoutBtn svg {
-  width: 24px;
-  height: 24px;
-  fill: white;
-}
-    .logo { font-size: 1.5rem; font-weight: bold; }
-    .menu button {
-      background: #ff4d4d;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-    }
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
 
-    /* Upload Section */
-    .upload-container {
-      display: none;
-      margin-top: 6rem;
-      max-width: 400px;
-      padding: 1.5rem;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      margin: 6rem auto 2rem;
-    }
-    .upload-container input {
-      width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 0.8rem;
-      border: none;
-      border-radius: 5px;
-      background: rgba(255,255,255,0.2);
-      color: white;
-    }
-    .upload-container button {
-      width: 100%;
-      padding: 0.7rem;
-      background-color: #007BFF;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-    }
+        .upload-container {
+            display: none;
+            margin: 6rem auto 2rem;
+            max-width: 400px;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
 
-    /* Carousel */
-    .carousel-container {
-      margin-top: 8rem;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      white-space: nowrap;
-      padding: 1rem;
-      display: flex;
-      gap: 1rem;
-    }
-    .carousel-card {
-      background: #001f3f;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      padding: 1rem;
-      width: 250px;
-      text-align: center;
-      display: inline-block;
-      flex: 0 0 auto;
-      scroll-snap-align: center;
-    }
-    .carousel-card h3 { margin-bottom: 0.5rem; }
-    .carousel-card a {
-      display: block;
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      border-radius: 5px;
-      color: white;
-      text-decoration: none;
-    }
-    .enc { background: #007BFF; }
-    .noenc { background: #28a745; }
-    .delete-btn {
-      background: #ff4d4d;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
+        .upload-container input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .upload-container button {
+            width: 100%;
+            padding: 0.7rem;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .carousel-container {
+            margin-top: 8rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            white-space: nowrap;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .carousel-card {
+            background: #001f3f;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            width: 250px;
+            text-align: center;
+            display: inline-block;
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .carousel-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 120, 255, 0.3);
+        }
+
+        .carousel-card h3 { 
+            margin-bottom: 0.5rem; 
+            color: #00ff88;
+        }
+
+        .carousel-card a {
+            display: block;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .enc { 
+            background: #007BFF; 
+            &:hover { background: #0056b3; }
+        }
+        
+        .noenc { 
+            background: #28a745;
+            &:hover { background: #1e7e34; }
+        }
+        
+        .delete-btn {
+            background: #ff4d4d;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: 0.3s;
+        }
+        
+        .delete-btn:hover {
+            background: #cc0000;
+        }
+
+        .blur-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem auto;
+            width: 80%;
+            max-width: 800px;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .blur-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .contributors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .contributor-card {
+            background: rgba(0, 30, 60, 0.4);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contributor-card:hover {
+            background: rgba(0, 50, 100, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .contributor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .contributor-card:hover::before {
+            left: 100%;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #007BFF, #00ff88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .contributor-info h3 {
+            color: #00ff88;
+            margin-bottom: 0.3rem;
+            font-size: 1.2em;
+        }
+
+        .contributor-info p {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9em;
+        }
+
+        .social-links {
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .social-links span {
+            background: rgba(255,255,255,0.1);
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8em;
+        }
+
+        .music-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .music-icon:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.2);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .playing {
+            animation: rotate 2s linear infinite;
+            color: #00ff88 !important;
+            text-shadow: 0 0 10px #00ff88;
+        }
+    </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">SC BOT</div>
-  <input type="text" id="searchInput" placeholder="Cari script..." class="search-bar">
-  <button id="logoutBtn">
-    <svg viewBox="0 0 24 24"><path d="M10 9v6h4v-4h4v-2h-4V9h-4zM7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/></svg>
-  </button>
-</header>
-
-<div id="uploadContainer" class="upload-container">
-  <h2>Upload Script</h2>
-  <input type="text" id="botName" placeholder="Nama Bot">
-  <input type="text" id="linkNoEnc" placeholder="Link No Enc">
-  <input type="text" id="linkEnc" placeholder="Link Enc">
-  <button onclick="uploadScript()">Upload</button>
-</div>
-
-<div class="carousel-container" id="carouselContainer"></div>
-
-<script>
-  function checkLogin() {
-    let name = sessionStorage.getItem('userName');
-    let role = sessionStorage.getItem('userRole');
-
-    if (!name) {
-      window.location.href = "login.html";
-    }
-
-    if (role === "owner") {
-      document.getElementById('uploadContainer').style.display = "block";
-    }
-  }
-
-  document.getElementById('logoutBtn').addEventListener('click', function() {
-    let scriptData = localStorage.getItem('scriptData'); 
-    localStorage.clear(); 
-    localStorage.setItem('scriptData', scriptData); 
-    window.location.href = "login.html"; 
-});
-    function loadScripts() {
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    console.log("Data script yang dimuat:", scripts);
-
-    let carouselContainer = document.getElementById("carouselContainer");
-    carouselContainer.innerHTML = "";
-
-    scripts.forEach((item, index) => {
-        let div = document.createElement("div");
-        div.className = "carousel-card";
-        div.innerHTML = `
-            <h3>${item.botName}</h3>
-            <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
-            <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
-            ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
-        `;
-        carouselContainer.appendChild(div);
-    });
-}
-  async function fetchScripts() {
-    let scripts = JSON.parse(localStorage.getItem("scriptData"));
-
-    if (!scripts || scripts.length === 0) {
-        try {
-            let response = await fetch("/sc.json"); // Ambil data dari JSON
-            let data = await response.json();
-            localStorage.setItem("scriptData", JSON.stringify(data));
-            loadScripts(); // Tampilkan script setelah di-load
-        } catch (error) {
-            console.error("Gagal mengambil data default:", error);
-        }
-    } else {
-        loadScripts(); // Jika sudah ada data di localStorage, langsung load
-    }
-}
-
-  document.getElementById('searchInput').addEventListener('input', function() {
-    let searchValue = this.value.toLowerCase();
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    let filteredScripts = scripts.filter(script => script.botName.toLowerCase().includes(searchValue));
+    <header>
+        <div class="logo">SC BOT</div>
+        <input type="text" id="searchInput" placeholder="Cari script..." class="search-bar">
+        <button id="logoutBtn">
+            <svg viewBox="0 0 24 24"><path d="M10 9v6h4v-4h4v-2h-4V9h-4zM7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/></svg>
+        </button>
+    </header>
     
-    let carouselContainer = document.getElementById("carouselContainer");
-    carouselContainer.innerHTML = "";
+    <div id="uploadContainer" class="upload-container">
+        <h2>Upload Script</h2>
+        <input type="text" id="botName" placeholder="Nama Bot">
+        <input type="text" id="linkNoEnc" placeholder="Link No Enc">
+        <input type="text" id="linkEnc" placeholder="Link Enc">
+        <input type="text" id="creator" placeholder="Creator">
+        <button onclick="uploadScript()">Upload</button>
+    </div>
 
-    filteredScripts.forEach((item, index) => {
-      let div = document.createElement("div");
-      div.className = "carousel-card";
-      div.innerHTML = `
-        <h3>${item.botName}</h3>
-        <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
-        <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
-        ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
-      `;
-      carouselContainer.appendChild(div);
-    });
-});
-  
-  function uploadScript() {
-    let botName = document.getElementById('botName').value.trim();
-    let linkNoEnc = document.getElementById('linkNoEnc').value.trim();
-    let linkEnc = document.getElementById('linkEnc').value.trim();
+    <div class="carousel-container" id="carouselContainer"></div>
 
-    if (!botName || !linkNoEnc || !linkEnc) {
-        alert("Semua kolom harus diisi!");
-        return;
-    }
+    <div class="blur-container">
+        <h2 style="margin-bottom: 1.5rem; font-size: 2em; text-shadow: 0 0 10px rgba(255,255,255,0.5);">🎖️ WEB CREATOR</h2>
+        <div class="contributors-grid">
+            <div class="contributor-card">
+                <div class="avatar">P</div>
+                <div class="contributor-info">
+                    <h3>YUDA SYCHPUTZ</h3>
+                    <p>Lead Developer</p>
+                    <div class="social-links">
+                        <span>🌟 10000 Stars</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contributor-card">
+                <div class="avatar">C</div>
+                <div class="contributor-info">
+                    <h3>CHATGPT</h3>
+                    <p>UI Designer</p>
+                    <div class="social-links">
+                        <span>🎨 500 Designs</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contributor-card">
+                <div class="avatar">D</div>
+                <div class="contributor-info">
+                    <h3>DEEPSEEK</h3>
+                    <p>Styles</p>
+                    <div class="social-links">
+                        <span>🧩 700 SETTLEMENT</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contributor-card">
+                <div class="avatar">G</div>
+                <div class="contributor-info">
+                    <h3>GEMINI</h3>
+                    <p>Smooth</p>
+                    <div class="social-links">
+                        <span>🌡️ 200 REPAIR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="music-icon" onclick="playMusic()" data-tooltip="Putar Musik">
+            💿
+        </div>
+    </div>
 
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    scripts.push({ botName, linkNoEnc, linkEnc });
+    <audio id="music" src="music.mp3"></audio>
 
-    localStorage.setItem("scriptData", JSON.stringify(scripts));
-    loadScripts();
-}
+    <script>
+        function checkLogin() {
+            let name = sessionStorage.getItem('userName');
+            let role = sessionStorage.getItem('userRole');
 
-  function deleteScript(index) {
-    let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
-    scripts.splice(index, 1);
-    localStorage.setItem("scriptData", JSON.stringify(scripts));
-    loadScripts();
-  }
+            if (!name) {
+                window.location.href = "login.html";
+            }
 
-  checkLogin();
-  fetchScripts();
-</script>
+            if (role === "owner") {
+                document.getElementById('uploadContainer').style.display = "block";
+            }
+        }
 
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            let scriptData = localStorage.getItem('scriptData');
+            localStorage.clear();
+            localStorage.setItem('scriptData', scriptData);
+            window.location.href = "login.html";
+        });
+
+        function loadScripts() {
+            let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+            let carouselContainer = document.getElementById("carouselContainer");
+            carouselContainer.innerHTML = "";
+
+            scripts.forEach((item, index) => {
+                let div = document.createElement("div");
+                div.className = "carousel-card";
+                div.innerHTML = `
+                    <h3>${item.botName}</h3>
+                    <div class="separator"></div>
+                    <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
+                    <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
+                    <div class="card-footer">Script Bot by ${item.creator}</div>
+                    ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
+                `;
+                div.addEventListener('click', function(){
+                    document.querySelectorAll('.carousel-card').forEach(card => card.classList.remove('active'));
+                    this.classList.add('active');
+                });
+                carouselContainer.appendChild(div);
+            });
+        }
+
+        async function fetchScripts() {
+            let scripts = JSON.parse(localStorage.getItem("scriptData"));
+            if (!scripts || scripts.length === 0) {
+                try {
+                    let response = await fetch("/sc.json");
+                    let data = await response.json();
+                    localStorage.setItem("scriptData", JSON.stringify(data));
+                    loadScripts();
+                } catch (error) {
+                    console.error("Gagal mengambil data default:", error);
+                }
+            } else {
+                loadScripts();
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            let searchValue = this.value.toLowerCase();
+            let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+            let filteredScripts = scripts.filter(script => script.botName.toLowerCase().includes(searchValue));
+            let carouselContainer = document.getElementById("carouselContainer");
+            carouselContainer.innerHTML = "";
+
+            filteredScripts.forEach((item, index) => {
+                let div = document.createElement("div");
+                div.className = "carousel-card";
+                div.innerHTML = `
+                    <h3>${item.botName}</h3>
+                    <div class="separator"></div>
+                    <a href="${item.linkEnc}" class="enc" target="_blank">ENC</a>
+                    <a href="${item.linkNoEnc}" class="noenc" target="_blank">NO ENC</a>
+                    <div class="card-footer">Script Bot by ${item.creator}</div>
+                    ${sessionStorage.getItem("userRole") === "owner" ? `<button class="delete-btn" onclick="deleteScript(${index})">Hapus</button>` : ""}
+                `;
+                carouselContainer.appendChild(div);
+            });
+        });
+
+        function uploadScript() {
+            let botName = document.getElementById('botName').value.trim();
+            let linkNoEnc = document.getElementById('linkNoEnc').value.trim();
+            let linkEnc = document.getElementById('linkEnc').value.trim();
+            let creator = document.getElementById('creator').value.trim();
+
+            if (!botName || !linkNoEnc || !linkEnc || !creator) {
+                alert("Semua kolom harus diisi!");
+                return;
+            }
+
+            let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+            scripts.push({ botName, linkNoEnc, linkEnc, creator });
+            localStorage.setItem("scriptData", JSON.stringify(scripts));
+            loadScripts();
+        }
+
+        function deleteScript(index) {
+            let scripts = JSON.parse(localStorage.getItem("scriptData")) || [];
+            scripts.splice(index, 1);
+            localStorage.setItem("scriptData", JSON.stringify(scripts));
+            loadScripts();
+        }
+
+        function playMusic(){
+            let music = document.getElementById('music');
+            let musicIcon = document.querySelector('.music-icon');
+            
+            if (music.paused) {
+                music.play();
+                musicIcon.classList.add('playing');
+            } else {
+                music.pause();
+                musicIcon.classList.remove('playing');
+            }
+        }
+
+        checkLogin();
+        fetchScripts();
+    </script>
 </body>
 </html>
